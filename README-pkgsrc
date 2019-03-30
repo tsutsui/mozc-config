@@ -1,0 +1,23 @@
+Build on pkgsrc:
+
+  (1) pkgsrc で mozc-tool をビルド
+ 
+    $ cvs -z1 -d anoncvs@anoncvs.netbsd.org:/cvsroot checkout pkgsrc
+     もしくは pkgsrc のミラーから pkgsrc.tar.xz 等を取得して展開
+    $ cd pkgsrc/inputmethod/mozc-tool
+    $ make
+      :
+
+  (2) mozc-tool ビルドの WRKDIR 内で mozc-config gitリポジトリを取得しビルド
+
+    $ cd work.i386/mozc-2.20.2673.102/src
+     → work.i386 については work もしくは work.${MACHINE_ARCH} 等、
+        /etc/mk.conf 等の設定に依存
+
+    $ git clone git://github.com/tsutsuii/mozc-config.git
+    $ git checkout pkgsrc-mozc-2.20.2673.102
+    $ cd mozc-config
+    $ make
+
+   現状は仮で mozc-config のみがビルドされる。
+   mozc-dict は未対応。（CUIで事前設定する必要性もないので対応予定もなし）
