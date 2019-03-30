@@ -1,5 +1,5 @@
 DESTDIR =
-prefix = /usr/local
+prefix = /usr/pkg
 bindir = $(prefix)/bin
 libexecdir = $(prefix)/libexec
 datadir = $(prefix)/share
@@ -7,32 +7,38 @@ datadir = $(prefix)/share
 CXX	= g++
 RM	= rm -f
 INSTALL = /usr/bin/install
+PKGCONFIG = $(bindir)/pkg-config
 
 MOZC_SRC = ..
+MOZC_RELEASE = $(MOZC_SRC)/out_bsd/Release
 
-CFLAGS	= 
+CFLAGS	= -O -std=gnu++11
+CFLAGS += -DOS_NETBSD
+
 
 LDFLAGS	=
 
 INCS	= -I$(MOZC_SRC) \
-	      -I$(MOZC_SRC)/out/Release/obj/gen \
-	      -I$(MOZC_SRC)/out/Release/obj/gen/proto_out
+	      -I$(MOZC_RELEASE)/gen \
+	      -I$(MOZC_RELEASE)/gen/proto_out \
+	      -I$(prefix)/include
 
 MOZC_CONF	= mozc-config
 
 MOZC_CONF_OBJS	= mozc_config_main.o
 
-MOZC_DICT	= mozc-dict
+#MOZC_DICT	= mozc-dict
 
-MOZC_DICT_OBJS	= mozc_dict_main.o
+#MOZC_DICT_OBJS	= mozc_dict_main.o
 
-EXTOBJS	= $(MOZC_SRC)/out/Release/obj.target/session_protocol/gen/proto_out/session/config.pb.o \
-          $(MOZC_SRC)/out/Release/obj.target/session/libconfig_handler.a \
-		  $(MOZC_SRC)/out/Release/obj.target/dictionary/libdictionary.a \
-		  $(MOZC_SRC)/out/Release/obj.target/dictionary/libuser_pos_data.a \
-          $(MOZC_SRC)/out/Release/obj.target/base/*.a
+EXTOBJS	= $(MOZC_RELEASE)/obj/protocol/gen/proto_out/protocol/config_proto.config.pb.o \
+          $(MOZC_RELEASE)/obj/config/libconfig_handler.a \
+		  $(MOZC_RELEASE)/obj/dictionary/libsuppression_dictionary.a \
+		  $(MOZC_RELEASE)/obj/dictionary/libuser_dictionary.a \
+          $(MOZC_RELEASE)/obj/base/*.a
 
-LIBS	= -lpthread -lprotobuf
+
+LIBS	!= $(PKGCONFIG) protobuf --libs
 
 IBUS_SETUP_MOZC = ibus-setup-mozc
 
@@ -43,7 +49,7 @@ MOS = ja.mo
 all:	$(MOZC_CONF) $(MOZC_DICT) $(MOS)
 
 $(MOZC_CONF):	$(MOZC_CONF_OBJS)
-	$(CXX) $(LDFLAGS) -o $@ $(LIBS) $(MOZC_CONF_OBJS) $(EXTOBJS)
+	$(CXX) $(LDFLAGS) -o $@ $(MOZC_CONF_OBJS) $(EXTOBJS) $(LIBS)
 
 $(MOZC_DICT):	$(MOZC_DICT_OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $(LIBS) $(MOZC_DICT_OBJS) $(EXTOBJS)

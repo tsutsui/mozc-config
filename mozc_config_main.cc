@@ -18,8 +18,8 @@
 
 using namespace std;
 
-#include "session/config.pb.h"
-#include "session/config_handler.h"
+#include "protocol/config.pb.h"
+#include "config/config_handler.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/message.h"
 
@@ -140,7 +140,7 @@ void get(string name) {
     } else if (type == 14) {
         value << ref->GetEnum(conf, field)->name();
     } else {
-        value << "/* Not Impl Error!! */";
+        value << "/* Not Impl Error!! */" << endl;
     }
     cout << value.str();
     if (type != 11)
@@ -148,7 +148,8 @@ void get(string name) {
 }
 
 void set_character_form_rules(string name, string group, string preedit, string conversion) {
-    mozc::config::Config conf = mozc::config::ConfigHandler::GetConfig();
+    mozc::config::Config conf;
+    mozc::config::ConfigHandler::GetConfig(&conf);
 
     const google::protobuf::FieldDescriptor* field =
             mozc::config::Config::descriptor()->FindFieldByName(name);
@@ -201,7 +202,7 @@ void set_character_form_rules(string name, string group, string preedit, string 
     mozc::config::ConfigHandler::SetConfig(conf);
 }
 
-void set(string name, string value) {
+void set_config(string name, string value) {
     if (is_ignore(name)) return;
 
     mozc::config::Config conf;
@@ -246,10 +247,8 @@ void set(string name, string value) {
 void clear(string name) {
     if (is_ignore(name)) return;
 
-//    mozc::config::Config conf;
-  //  mozc::config::ConfigHandler::GetConfig(&conf);
-
-    mozc::config::Config conf = mozc::config::ConfigHandler::GetConfig();
+    mozc::config::Config conf;
+    mozc::config::ConfigHandler::GetConfig(&conf);
 
     const google::protobuf::FieldDescriptor* field =
             conf.GetDescriptor()->FindFieldByName(name);
@@ -288,10 +287,8 @@ void print_modifier() {
 }
 
 void print_all() {
-//    mozc::config::Config conf;
-//    mozc::config::ConfigHandler::GetConfig(&conf);
-
-    mozc::config::Config conf = mozc::config::ConfigHandler::GetConfig();
+    mozc::config::Config conf;
+    mozc::config::ConfigHandler::GetConfig(&conf);
 
     const google::protobuf::Descriptor* desc = conf.GetDescriptor();//mozc::config::Config::descriptor();
     const google::protobuf::Reflection* ref = conf.GetReflection();
@@ -341,7 +338,7 @@ void print_all() {
         } else if (type == 14) {
             value << ref->GetEnum(conf, field)->name();
         } else {
-            value << "/* Not Impl Error!! */";
+            value << "/* Not Impl Error!! */" << endl;
         }
         cout << value.str();
         if (type != 11) cout << endl;
@@ -466,7 +463,7 @@ int main(int argc, char **argv) {
             set_character_form_rules((string)argv[2], (string)argv[3],
                                      (string)argv[4], (string)argv[5]);
         } else if (argc > 3) {
-            set((string)argv[2], (string)argv[3]);
+            set_config((string)argv[2], (string)argv[3]);
         }
     } else if (flg == "-c") {
         if (argc > 2)
