@@ -73,7 +73,7 @@ Usage:
     一番目の内部辞書に決め打ちしているので容量を超える登録は不可能
 
 Usage:
-    git-config [ -h | -a | -m | -g <NAME> | -s <NAME> <VALUE> | -c <NAME> ]
+    mozc-config [ -h | -a | -m | -g <NAME> | -s <NAME> <VALUE> | -c <NAME> ]
         -h                - ヘルプを表示する
         -a                - すべてのプロパティを表示する
         -m                - 変更されたプロパティを表示する
